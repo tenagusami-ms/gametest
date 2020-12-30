@@ -1,20 +1,22 @@
-# -*- coding: utf-8 -*-
 from __future__ import annotations
 
 import pygame
-from pygame.locals import *
+from pygame.constants import QUIT, KEYDOWN, K_ESCAPE, K_LEFT, K_RIGHT, K_UP, K_DOWN
 
 
 def main():
-    pygame.init()  # 初期化
-    screen_width = 1306
-    screen_height = 653
-    pygame.display.set_mode((screen_width, screen_height), 0, 32)
-    screen = pygame.display.get_surface()
+    """
+    メイン関数
+    """
+    pygame.init()  # pygame初期化
+    screen_width = 1306  # 画面幅
+    screen_height = 653  # 画面高さ
+    pygame.display.set_mode((screen_width, screen_height), 0, 32)  # 画面セット
+    screen = pygame.display.get_surface()  # スクリーンのSurfaceオブジェクト
     pygame.display.set_caption("Pygame Test")  # ウィンドウタイトル
     background = pygame.image.load("image/sakaiura.JPG").convert_alpha()  # 背景画像の指定
     rectangle_background = background.get_rect()  # 画像を含む長方形オブジェクト
-    player = Player(screen_width / 2, screen_height / 2, screen_width, screen_height)
+    player = Player(screen_width // 2, screen_height // 2, screen_width, screen_height)
 
     running: bool = True
     while running:
@@ -33,11 +35,23 @@ def main():
                 if event.key == K_ESCAPE:
                     running = False
 
-    pygame.quit()
+    pygame.quit()  # pygame終了
 
 
 class Player(pygame.sprite.Sprite):
+    """
+    プレーヤーのスプライト
+    """
     def __init__(self, x, y, screen_width, screen_height):
+        """
+        コンストラクタ
+
+        Args:
+            x (int): スプライトの初期x座標
+            y (int): スプライトの初期y座標
+            screen_width (int): スクリーン幅
+            screen_height (int): スプリーン高さ
+        """
         super(Player, self).__init__()
         self.screen_width = screen_width
         self.screen_height = screen_height
@@ -46,7 +60,12 @@ class Player(pygame.sprite.Sprite):
         self.rectangle = self.surface.get_rect()  # コスチュームが描かれる長方形オブジェクト
         self.rectangle.center = (x, y)  # キャラ座標を中心に
 
-    def update(self, pressed_key):
+    def update(self, pressed_key) -> None:
+        """
+        スプライトの動きのコントロール
+        Args:
+            pressed_key: 押したキーのオブジェクト
+        """
         if pressed_key[K_LEFT]:
             self.rectangle.move_ip(-3, 0)
         if pressed_key[K_RIGHT]:
