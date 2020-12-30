@@ -19,34 +19,36 @@ def main():
     screen = pygame.display.get_surface()  # スクリーンのSurfaceオブジェクト
     pygame.display.set_caption("Pygame Test")  # ウィンドウタイトル
     background = pygame.image.load("image/sakaiura.JPG").convert_alpha()  # 背景画像の指定
-    background.set_colorkey((255, 255, 255), RLEACCEL)
+    background.set_colorkey((255, 255, 255), RLEACCEL)  # 画像描画の高速化
     rectangle_background = background.get_rect()  # 画像を含む長方形オブジェクト
 
-    add_enemy = pygame.USEREVENT + 1
-    pygame.time.set_timer(add_enemy, 250)
-    player = Player(screen_width // 2, screen_height // 2, screen_width, screen_height)
-    enemies = pygame.sprite.Group()
-    all_sprites = pygame.sprite.Group()
-    all_sprites.add(player)
+    add_enemy = pygame.USEREVENT + 1  # 敵を生成するイベント設定
+    pygame.time.set_timer(add_enemy, 250)  # 250ms毎に敵を生成
+    player = Player(screen_width // 2, screen_height // 2, screen_width, screen_height)  # プレイヤー生成
+    enemies = pygame.sprite.Group()  # 後で生成される敵スプライトのグループ
+    all_sprites = pygame.sprite.Group()  # 全スプライトのグループ
+    all_sprites.add(player)  # 全スプライトのグループにプレイヤーを入れておく
 
-    pygame.mixer.music.load("sound/ImpactBall_BGM.mp3")
-    pygame.mixer.music.play(loops=-1)
-    collision_sound = pygame.mixer.Sound("sound/bound.mp3")
+    pygame.mixer.music.load("sound/ImpactBall_BGM.mp3")  # BGM設定
+    pygame.mixer.music.play(loops=-1)  # BGM開始
+    collision_sound = pygame.mixer.Sound("sound/bound.mp3")  # 衝突音
 
     running: bool = True
     while running:
-        pressed_key = pygame.key.get_pressed()
+        pressed_key = pygame.key.get_pressed()  # 押されたキー
         player.update(pressed_key)
         enemies.update()
         screen.fill((0, 0, 0, 0))  # 背景色の指定。RGBのはず
         screen.blit(background, rectangle_background)  # 背景画像の描画
 
+        # 画面アップデート
         for entity in all_sprites:
-            screen.blit(entity.surf, entity.rect)
+            screen.blit(entity.image, entity.rect)
         pygame.display.flip()  # 画面を更新
         clock.tick(30)
 
         if pygame.sprite.spritecollideany(player, enemies):
+            # 敵に当たった
             collision_sound.play()
             player.kill()
             running = False
@@ -58,6 +60,7 @@ def main():
                 if event.key == K_ESCAPE:
                     running = False
             elif event.type == add_enemy:
+                # 敵の生成
                 new_enemy = Enemy(screen_width, screen_height)
                 enemies.add(new_enemy)
                 all_sprites.add(new_enemy)
@@ -83,10 +86,10 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.screen_width = screen_width
         self.screen_height = screen_height
-        surface_tmp = pygame.image.load("image/赤丸.png").convert_alpha()  # キャラ画像の指定
-        self.surf = pygame.transform.scale(surface_tmp, (50, 50)).convert_alpha()  # Surfaceオブジェクト: コスチューム
-        self.surf.set_colorkey((255, 255, 255), RLEACCEL)
-        self.rect = self.surf.get_rect()  # コスチュームが描かれる長方形オブジェクト
+        image_tmp = pygame.image.load("image/赤丸.png").convert_alpha()  # キャラ画像の指定
+        self.image = pygame.transform.scale(image_tmp, (50, 50)).convert_alpha()  # Surfaceオブジェクト: コスチューム
+        self.image.set_colorkey((255, 255, 255), RLEACCEL)  # 画像描画の高速化
+        self.rect = self.image.get_rect()  # コスチュームが描かれる長方形オブジェクト
         self.rect.center = (x, y)  # キャラ座標を中心に
         self.speed = 5
 
@@ -125,11 +128,11 @@ class Enemy(pygame.sprite.Sprite):
         コンストラクタ
         """
         super(Enemy, self).__init__()
-        self.surf = pygame.Surface((20, 10))
-        self.surf.fill((255, 255, 255))
+        self.image = pygame.Surface((20, 10))
+        self.image.fill((255, 255, 255))
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.rect = self.surf.get_rect(
+        self.rect = self.image.get_rect(
             center=(random.randint(self.screen_width + 20, self.screen_width + 100),
                     random.randint(0, self.screen_height)))
         self.speed = random.randint(5, 20)
