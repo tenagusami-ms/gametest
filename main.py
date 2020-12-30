@@ -63,7 +63,6 @@ def main():
                 all_sprites.add(new_enemy)
 
     pygame.quit()  # pygame終了
-    pygame.mixer.music.stop()  # 音の終了
     pygame.mixer.quit()  # ミキサ終了
 
 
