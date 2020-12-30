@@ -29,9 +29,9 @@ def main():
     all_sprites = pygame.sprite.Group()  # 全スプライトのグループ
     all_sprites.add(player)  # 全スプライトのグループにプレイヤーを入れておく
 
-    pygame.mixer.music.load("sound/ImpactBall_BGM.mp3")  # BGM設定
+    pygame.mixer.music.load("sound/ImpactBall_BGM.wav")  # BGM設定
     pygame.mixer.music.play(loops=-1)  # BGM開始
-    collision_sound = pygame.mixer.Sound("sound/bound.mp3")  # 衝突音
+    collision_sound = pygame.mixer.Sound("sound/bound.wav")  # 衝突音
 
     running: bool = True
     while running:
